@@ -43,15 +43,13 @@ assumes left-handed and z-up, so:
   \li h rotates around the z axis
   \li p rotates aroung the x' axis
   \li r rotates around the y'' axis
-
-\deprecated Please use Orientation instead.
 */
-osgwDEPRECATED( OSGWTOOLS_EXPORT osg::Quat makeHPRQuat( double h, double p, double r ) );
+OSGWTOOLS_EXPORT osg::Quat makeHPRQuat( double h, double p, double r );
 
-/** \overload
-\deprecated Please use Orientation instead.
+/** Same as makeHPRQuat, but it stores the hpr angles as xyz elements of a Vec3.
+\see makeHPRQuat
 */
-osgwDEPRECATED( OSGWTOOLS_EXPORT osg::Quat makeHPRQuat( osg::Vec3 rotAngles ) );
+OSGWTOOLS_EXPORT osg::Quat makeHPRQuat( osg::Vec3 rotAngles );
 
 /*@}*/
 
