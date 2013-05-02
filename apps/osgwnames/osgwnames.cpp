@@ -32,8 +32,8 @@ class ShowNodeNamesVisitor : public osg::NodeVisitor
 public:
     ShowNodeNamesVisitor( const bool showGeodes )
       : osg::NodeVisitor( osg::NodeVisitor::TRAVERSE_ALL_CHILDREN ),
-        _level( 0 ),
-        _showGeodes( showGeodes )
+        _showGeodes( showGeodes ),
+        _level( 0 )
     {}
 
     void apply( osg::Node& n )

@@ -31,11 +31,6 @@
 #include <string>
 #include <limits>
 
-//This is necessary to resolve windows min/max macros compile errors 
-//that are caused by header pollution through downstream inclusion.
-#undef min
-#undef max
-
 namespace osg {
     class Geometry;
 }
