@@ -14,8 +14,6 @@ set( LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/AbsoluteModelTransform.h
     ${HEADER_PATH}/CallbackSupport.h
     ${HEADER_PATH}/CameraConfigObject.h
-    ${HEADER_PATH}/Capabilities.h
-    ${HEADER_PATH}/CollapseLOD.h
     ${HEADER_PATH}/CountStateSets.h
     ${HEADER_PATH}/CountsVisitor.h
     ${HEADER_PATH}/DataLoader.h
@@ -26,13 +24,11 @@ set( LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/ForceFlattenTransforms.h
     ${HEADER_PATH}/GeometryModifier.h
     ${HEADER_PATH}/GeometryOperation.h
-    ${HEADER_PATH}/InsertRemove.h
+    ${HEADER_PATH}/CollapseLOD.h
     ${HEADER_PATH}/LODCreationNodeVisitor.h
-    ${HEADER_PATH}/MeshOptimizers.h
-    ${HEADER_PATH}/MultiCameraProjectionMatrix.h
     ${HEADER_PATH}/NodePathUtils.h
     ${HEADER_PATH}/NodeUtils.h
-    ${HEADER_PATH}/Orientation.h
+    ${HEADER_PATH}/InsertRemove.h
     ${HEADER_PATH}/ParallelVisitor.h
     ${HEADER_PATH}/PrimitiveSetConversion.h
     ${HEADER_PATH}/Quat.h
@@ -43,16 +39,13 @@ set( LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/RemoveLOD.h
     ${HEADER_PATH}/RemoveProgram.h
     ${HEADER_PATH}/ScreenCapture.h
-    ${HEADER_PATH}/SerializerSupport.h
     ${HEADER_PATH}/Shapes.h
     ${HEADER_PATH}/ShortEdgeOp.h
     ${HEADER_PATH}/SimplifierOp.h
     ${HEADER_PATH}/StateSetUtils.h
     ${HEADER_PATH}/StateTrackingNodeVisitor.h
-    ${HEADER_PATH}/TangentSpaceGeneratorDouble.h
     ${HEADER_PATH}/TangentSpaceOp.h
     ${HEADER_PATH}/Transform.h
-    ${HEADER_PATH}/TransformUtils.h
     ${HEADER_PATH}/TransparencyUtils.h
     ${HEADER_PATH}/Uniqifier.h
     ${HEADER_PATH}/Version.h
@@ -62,8 +55,6 @@ set( _osgwToolsSourceFiles
     AbsoluteModelTransform.cpp
     CallbackSupport.cpp
     CameraConfigObject.cpp
-    Capabilities.cpp
-    CollapseLOD.cpp
     CountStateSets.cpp
     CountsVisitor.cpp
     DecimatorOp.cpp
@@ -72,13 +63,11 @@ set( _osgwToolsSourceFiles
     ForceFlattenTransforms.cpp
     GeometryModifier.cpp
     GeometryOperation.cpp
-    InsertRemove.cpp
+    CollapseLOD.cpp
     LODCreationNodeVisitor.cpp
-    MeshOptimizers.cpp
-    MultiCameraProjectionMatrix.cpp
     NodePathUtils.cpp
     NodeUtils.cpp
-    Orientation.cpp
+    InsertRemove.cpp
     ParallelVisitor.cpp
     PluginLoader.cpp
     PrimitiveSetConversion.cpp
@@ -95,10 +84,8 @@ set( _osgwToolsSourceFiles
     SimplifierOp.cpp
     StateSetUtils.cpp
     StateTrackingNodeVisitor.cpp
-    TangentSpaceGeneratorDouble.cpp
     TangentSpaceOp.cpp
     Transform.cpp
-    TransformUtils.cpp
     TransparencyUtils.cpp
     Uniqifier.cpp
     Version.cpp
@@ -111,7 +98,6 @@ add_library( ${LIB_NAME}
 if( BUILD_SHARED_LIBS )
     target_link_libraries( ${LIB_NAME}
         ${OSG_LIBRARIES}
-        ${OPENGL_gl_LIBRARY}
     )
 endif()
 

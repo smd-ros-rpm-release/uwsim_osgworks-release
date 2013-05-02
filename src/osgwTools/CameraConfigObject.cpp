@@ -38,14 +38,12 @@ CameraConfigInfo::CameraConfigInfo()
   : _version( 1 )
 {
 }
-
-CameraConfigInfo::CameraConfigInfo( const osgwTools::CameraConfigInfo& rhs, const osg::CopyOp& )
-  : _viewOffset( rhs._viewOffset ),
-    _projectionOffset( rhs._projectionOffset ),
-    _version( rhs._version )
+CameraConfigInfo::CameraConfigInfo( const osgwTools::CameraConfigInfo& rhs, const osg::CopyOp& copyop )
+  : _version( rhs._version ),
+    _viewOffset( rhs._viewOffset ),
+    _projectionOffset( rhs._projectionOffset )
 {
 }
-
 CameraConfigInfo::~CameraConfigInfo()
 {
 }
@@ -54,13 +52,11 @@ CameraConfigObject::CameraConfigObject()
   : _version( 1 )
 {
 }
-
 CameraConfigObject::CameraConfigObject( const osgwTools::CameraConfigObject& rhs, const osg::CopyOp& copyop )
   : _version( rhs._version ),
     _slaveConfigInfo( rhs._slaveConfigInfo )
 {
 }
-
 CameraConfigObject::~CameraConfigObject()
 {
 }

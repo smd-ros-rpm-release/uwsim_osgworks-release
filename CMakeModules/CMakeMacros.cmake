@@ -56,7 +56,7 @@ MACRO( MAKE_EXECUTABLE EXENAME )
         ${OSG_LIBRARIES}
         ${OPENGL_gl_LIBRARY}
     )
-    if( ${CATEGORY} STREQUAL "App" )
+    if( CATEGORY STREQUAL "App" )
         install(
             TARGETS ${EXENAME}
             RUNTIME DESTINATION bin COMPONENT libosgworks
@@ -78,11 +78,8 @@ MACRO( ADD_EXECUTABLE_INTERNAL TRGTNAME )
     ENDIF(WIN32)
 ENDMACRO( ADD_EXECUTABLE_INTERNAL TRGTNAME )
 
-macro( LINK_INTERNAL TRGTNAME )
-    foreach( LINKLIB ${ARGN} )
-        target_link_libraries( ${TRGTNAME} optimized "${LINKLIB}" debug "${LINKLIB}" )
-    endforeach()
-    target_link_libraries( ${TRGTNAME}
-        ${OPENGL_gl_LIBRARY}
-    )
-endmacro()
+MACRO( LINK_INTERNAL TRGTNAME )
+    FOREACH(LINKLIB ${ARGN})
+        TARGET_LINK_LIBRARIES( ${TRGTNAME} optimized "${LINKLIB}" debug "${LINKLIB}" )
+    ENDFOREACH(LINKLIB)
+ENDMACRO( LINK_INTERNAL TRGTNAME )

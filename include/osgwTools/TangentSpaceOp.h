@@ -24,7 +24,7 @@
 
 #include <osgwTools/Export.h>
 #include <osgwTools/GeometryOperation.h>
-#include <osgwTools/TangentSpaceGeneratorDouble.h>
+#include <osgUtil/TangentSpaceGenerator>
 #include <osg/CopyOp>
 #include <osg/Object>
 #include <osg/Vec3>
@@ -33,7 +33,7 @@ namespace osgwTools {
 
 
 /** \class TangentSpaceOp TangentSpaceOp.h <osgwTools/TangentSpaceOp.h>
-\brief Runs TangentSpaceGeneratorDouble on all Geometry objects.
+\brief Runs the osgUtil::TangentSpaceGenerator on all Geometry objects.
 */
 class OSGWTOOLS_EXPORT TangentSpaceOp : public GeometryOperation
 {
@@ -59,7 +59,7 @@ protected:
     unsigned int _binormalIndex;
     unsigned int _normalIndex;
 
-    osg::ref_ptr< TangentSpaceGeneratorDouble > _tsg;
+    osg::ref_ptr< osgUtil::TangentSpaceGenerator > _tsg;
 };
 
 
