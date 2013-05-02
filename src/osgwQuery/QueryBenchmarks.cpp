@@ -43,11 +43,10 @@ QueryBenchmarks* getQueryBenchmarks( unsigned int contextID, osg::RenderInfo* ri
 
 QueryBenchmarks::QueryBenchmarks( unsigned int contextID, osg::RenderInfo* ri )
   : osg::Referenced(),
+    _initialized( false ),
     _trSetup( 0. ), _trTriangle( 0. ), _trFragment( 0. ),
     _toSetup( 0. ), _toFragment( 0. ),
-    _toLatency( 0. ), _toOverhead( 0. ),
-    _initialized( false )
-
+    _toLatency( 0. ), _toOverhead( 0. )
 {
     internalInit( contextID, ri );
 }

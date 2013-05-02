@@ -22,7 +22,6 @@
 #include <osgwMx/MxUtils.h>
 
 #include <osgwTools/Transform.h>
-#include <osgwTools/Orientation.h>
 
 #include <osg/Matrixd>
 #include <osg/BoundingSphere>
@@ -45,8 +44,6 @@ MxCore::MxCore()
     _initialUp( 0., 0., 1. ),
     _initialDir( 0., 1., 0. ),
     _initialPosition( 0., 0., 0. ),
-    _orientedUp( 0., 0., 1. ),
-    _orientedDir( 0., 1., 0. ),
     _orbitCenter( 0., 0., 0. ),
     _rotateScale( 1. ),
     _moveScale( 1., 1., 1. ),
@@ -69,8 +66,6 @@ MxCore::MxCore( const MxCore& rhs, const osg::CopyOp& copyop )
     _initialUp( rhs._initialUp ),
     _initialDir( rhs._initialDir ),
     _initialPosition( rhs._initialPosition ),
-    _orientedUp( rhs._orientedUp ),
-    _orientedDir( rhs._orientedDir ),
     _orbitCenter( rhs._orbitCenter ),
     _rotateScale( rhs._rotateScale ),
     _moveScale( rhs._moveScale ),
@@ -133,7 +128,7 @@ osg::Matrixd MxCore::getInverseMatrix() const
         c[1], u[1], -d[1], 0.0,
         c[2], u[2], -d[2], 0.0,
         0.0, 0.0, 0.0, 1.0 );
-    return( osg::Matrixd::translate( -_position ) * m );
+    return( osg::Matrix::translate( -_position ) * m );
 
     // Old code, for a sanity check.
     //osg::Matrixd m;
@@ -182,55 +177,26 @@ void MxCore::reset()
     setOrtho( false );
 }
 
-
-void MxCore::setOriented( const osg::Vec3d& up, const osg::Vec3d& dir )
-{
-    _orientedUp = up;
-    _orientedDir = dir;
-
-    // Error check.
-    _orientedUp.normalize();
-    _orientedDir.normalize();
-    if( osg::absolute< double >( _orientedUp * _orientedDir ) > 0.99 )
-        osg::notify( osg::WARN ) << "MxCore::setOriented: Up and dir vectors are nearly coincident. Results are undefined." << std::endl;
-
-    // orthonormalize
-    const osg::Vec3d c = _orientedDir ^ _orientedUp;
-    _orientedUp = c ^ _orientedDir;
-    _orientedUp.normalize();
-    _orientedDir.normalize();
-}
-void MxCore::setOriented( const osg::Vec3d& dir )
-{
-    setOriented( _orientedUp, dir );
-}
-void MxCore::getOriented( osg::Vec3d& up, osg::Vec3d& dir )
-{
-    up = _orientedUp;
-    dir = _orientedDir;
-}
-
-
-void MxCore::setByMatrix( const osg::Matrixd& m )
+void MxCore::setByMatrix( const osg::Matrix& m )
 {
     _viewUp.set( m( 1, 0 ), m( 1, 1 ), m( 1, 2 ) );
     _viewDir.set( -m( 2, 0 ), -m( 2, 1 ), -m( 2, 2 ) );
     _position.set( m( 3, 0 ), m( 3, 1 ), m( 3, 2 ) );
     orthonormalize();
 }
-void MxCore::setByInverseMatrix( const osg::Matrixd& m )
+void MxCore::setByInverseMatrix( const osg::Matrix& m )
 {
-    setByMatrix( osg::Matrixd::inverse( m ) );
+    setByMatrix( osg::Matrix::inverse( m ) );
 }
-void MxCore::setOrientationByMatrix( const osg::Matrixd& m )
+void MxCore::setOrientationByMatrix( const osg::Matrix& m )
 {
     _viewUp.set( m( 1, 0 ), m( 1, 1 ), m( 1, 2 ) );
     _viewDir.set( -m( 2, 0 ), -m( 2, 1 ), -m( 2, 2 ) );
     orthonormalize();
 }
-void MxCore::setOrientationByInverseMatrix( const osg::Matrixd& m )
+void MxCore::setOrientationByInverseMatrix( const osg::Matrix& m )
 {
-    setOrientationByMatrix( osg::Matrixd::inverse( m ) );
+    setOrientationByMatrix( osg::Matrix::inverse( m ) );
 }
 
 void MxCore::level()
@@ -338,7 +304,7 @@ void MxCore::lookAtOrbitCenter()
     osg::Vec3d newDir = _orbitCenter - _position;
     newDir.normalize();
 
-    const osg::Matrixd r = osg::Matrixd::rotate( _viewDir, newDir );
+    const osg::Matrix r = osg::Matrix::rotate( _viewDir, newDir );
     _viewDir = _viewDir * r;
     _viewUp = _viewUp * r;
     orthonormalize();
@@ -347,26 +313,42 @@ void MxCore::lookAtOrbitCenter()
 
 void MxCore::rotateLocal( double angle, const osg::Vec3d& axis )
 {
-    const osg::Matrixd r = osg::Matrixd::rotate( angle * _rotateScale, axis );
+    const osg::Matrix r = osg::Matrix::rotate( angle * _rotateScale, axis );
     _viewDir = _viewDir * r;
     _viewUp = _viewUp * r;
     orthonormalize();
 }
+void MxCore::rotate( double angle, const osg::Vec3d& axis )
+{
+    osg::notify( osg::WARN ) << "MxCore::rotate() is deprecated. Use rotateLocal() instead." << std::endl;
+    rotateLocal( angle, axis );
+}
 
 void MxCore::rotateOrbit( double angle, const osg::Vec3d& axis )
 {
-    const osg::Matrixd r = osg::Matrixd::rotate( angle * _rotateScale, axis );
+    const osg::Matrix r = osg::Matrix::rotate( angle * _rotateScale, axis );
 
     _position = ( _position - _orbitCenter ) * r + _orbitCenter;
     _viewDir = _viewDir * r;
     _viewUp = _viewUp * r;
     orthonormalize();
 }
+void MxCore::rotate( double angle, const osg::Vec3d& axis, const osg::Vec3d& point )
+{
+    osg::notify( osg::WARN ) << "MxCore::rotate() is deprecated. Use rotateOrbit() instead." << std::endl;
+    setOrbitCenterPoint( point );
+    rotateOrbit( angle, axis );
+}
 
 void MxCore::moveLiteral( const osg::Vec3d& delta )
 {
     _position += delta;
     _orbitCenter += delta;
+}
+void MxCore::moveWorldCoords( const osg::Vec3d& delta )
+{
+    osg::notify( osg::WARN ) << "MxCore::moveWorldCoords() is deprecated. Use moveLiteral() instead." << std::endl;
+    moveLiteral( delta );
 }
 void MxCore::moveLocal( const osg::Vec3d& delta )
 {
@@ -375,45 +357,21 @@ void MxCore::moveLocal( const osg::Vec3d& delta )
     _position += ( scaledDelta * getOrientationMatrix() );
     _orbitCenter += ( scaledDelta * getOrientationMatrix() );
 }
+void MxCore::move( const osg::Vec3d& delta )
+{
+    osg::notify( osg::WARN ) << "MxCore::move() is deprecated. Use moveLocal() instead." << std::endl;
+    moveLocal( delta );
+}
 void MxCore::moveConstrained( const osg::Vec3d& delta )
 {
     const osg::Vec3d c = getCross();
     const osg::Vec3d& u = _initialUp;
     const osg::Vec3d back = c ^ u;
-    const osg::Matrixd orient(
+    const osg::Matrix orient(
         c[ 0 ], c[ 1 ], c[ 2 ], 0.,
         u[ 0 ], u[ 1 ], u[ 2 ], 0.,
         back[ 0 ], back[ 1 ], back[ 2 ], 0.,
         0., 0., 0., 1. );
-
-    const osg::Vec3d scaledDelta( delta[0] * _moveScale[0],
-        delta[1] * _moveScale[1], delta[2] * _moveScale[2] );
-    _position += ( scaledDelta * orient );
-    _orbitCenter += ( scaledDelta * orient );
-}
-void MxCore::moveOriented( const osg::Vec3d& delta, const bool orientedToWorld )
-{
-    const osg::Vec3d c = _orientedDir ^ _orientedUp;
-    const osg::Vec3d& u = _orientedUp;
-    const osg::Vec3d& d = _orientedDir;
-    osg::Matrixd orient(
-        c[ 0 ], c[ 1 ], c[ 2 ], 0.,
-        u[ 0 ], u[ 1 ], u[ 2 ], 0.,
-        -d[ 0 ], -d[ 1 ], -d[ 2 ], 0.,
-        0., 0., 0., 1. );
-    if( orientedToWorld )
-    {
-        const osg::Vec3d cl = getCross();
-        const osg::Vec3d& ul = _viewUp;
-        const osg::Vec3d& dl = _viewDir;
-
-        const osg::Matrixd l2w(
-            cl[0], cl[1], cl[2], 0.0,
-            dl[0], dl[1], dl[2], 0.0,
-            ul[0], ul[1], ul[2], 0.0,
-            0.0, 0.0, 0.0, 1.0 );
-        orient = orient * l2w;
-    }
 
     const osg::Vec3d scaledDelta( delta[0] * _moveScale[0],
         delta[1] * _moveScale[1], delta[2] * _moveScale[2] );
@@ -425,7 +383,7 @@ void MxCore::moveWorld( const osg::Vec3d& delta )
     const osg::Vec3d& u = _initialUp;
     const osg::Vec3d& d = _initialDir;
     const osg::Vec3d c = d ^ u;
-    const osg::Matrixd orient(
+    const osg::Matrix orient(
         c[ 0 ], c[ 1 ], c[ 2 ], 0.,
         u[ 0 ], u[ 1 ], u[ 2 ], 0.,
         -d[ 0 ], -d[ 1 ], -d[ 2 ], 0.,
@@ -460,24 +418,6 @@ void MxCore::moveOrbit( const float distance )
 
 void MxCore::getYawPitchRoll( double& yaw, double& pitch, double& roll, bool rightHanded ) const
 {
-#if 1
-    osg::Matrix m( getOrientationMatrix() );
-    // Reverse the view vector.
-    m(2,0) = -m(2,0);
-    m(2,1) = -m(2,1);
-    m(2,2) = -m(2,2);
-
-    // Orientation class assumes matrix contains only the delta transform
-    // from base vectors to ypr, so subtract out the default orientation.
-    const osg::Matrixd baseInv( 1., 0., 0., 0.,
-        0., 0., 1., 0.,
-        0., 1., 0., 0.,
-        0., 0., 0., 1. );
-
-    osg::ref_ptr< osgwTools::Orientation > orient( new osgwTools::Orientation() );
-    orient->setRightHanded( rightHanded );
-    orient->getYPR( baseInv * m, yaw, pitch, roll );
-#else
     // Temp var for cross products.
     osg::Vec3d right;
 
@@ -495,7 +435,7 @@ void MxCore::getYawPitchRoll( double& yaw, double& pitch, double& roll, bool rig
     right = _initialDir ^ _initialUp;
     const double dotDirRight = projectedDir * right;
     // Dot product of two unit vectors is the cosine of the angle between them.
-    const double dotDirNorth = osg::clampBetween<double>( projectedDir * _initialDir, -1., 1. );
+    const double dotDirNorth = projectedDir * _initialDir;
     double yawRad = acos( dotDirNorth );
     if( dotDirRight > 0. )
         yawRad = osg::PI + ( osg::PI - yawRad );
@@ -509,7 +449,7 @@ void MxCore::getYawPitchRoll( double& yaw, double& pitch, double& roll, bool rig
     // Pitch
 
     const double dotDirUp = _viewDir * _initialUp;
-    const double dotUpUp = osg::clampBetween<double>( _viewUp * _initialUp, -1., 1. );
+    const double dotUpUp = _viewUp * _initialUp;
     double pitchRad = acos( osg::absolute< double >( dotUpUp ) );
     if( dotDirUp < 0. )
         pitchRad *= -1.;
@@ -526,7 +466,7 @@ void MxCore::getYawPitchRoll( double& yaw, double& pitch, double& roll, bool rig
     right = _viewDir ^ projectedBaseUp;
     const double dotUpRight = _viewUp * right;
     // Dot product of two unit vectors is the cosine of the angle between them.
-    const double dotUp = osg::clampBetween<double>( projectedBaseUp * _viewUp, -1., 1. );
+    const double dotUp = projectedBaseUp * _viewUp;
     double rollRad = acos( dotUp );
     if( dotUpRight > 0. )
         rollRad = osg::PI + ( osg::PI - rollRad );
@@ -535,7 +475,6 @@ void MxCore::getYawPitchRoll( double& yaw, double& pitch, double& roll, bool rig
     if( rollRad == twoPi )
         rollRad = 0.;
     roll = osg::RadiansToDegrees( rollRad );
-#endif
 }
 
 
@@ -564,6 +503,8 @@ void MxCore::updateFovy( osg::Matrixd& proj ) const
         double left, right, bottom, top, near, far;
         proj.getFrustum( left, right, bottom, top, near, far );
 
+        const double fovLeft = atan( left / near );
+        const double fovRight = atan( right / near );
         const double fovBottom = atan( bottom / near );
         const double fovTop = atan( top / near );
 
