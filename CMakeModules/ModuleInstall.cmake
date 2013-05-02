@@ -2,8 +2,8 @@
 # ${LIB_NAME}
 # ${LIB_PUBLIC_HEADERS}
 
-SET(INSTALL_INCDIR include)
-SET(INSTALL_BINDIR bin)
+SET(INSTALL_INCDIR include/${PROJECT_NAME})
+SET(INSTALL_BINDIR bin/${PROJECT_NAME})
 IF(WIN32)
     SET(INSTALL_LIBDIR bin)
     SET(INSTALL_ARCHIVEDIR lib)
@@ -30,7 +30,8 @@ INSTALL(
 # FIXME: Do not run for OS X framework
 INSTALL(
     FILES        ${LIB_PUBLIC_HEADERS}
-    #EXPORT osgworks-targets
     DESTINATION ${INSTALL_INCDIR}/${LIB_NAME}
     COMPONENT libosgworks-dev
 )
+
+#    EXPORT osgworks-targets
