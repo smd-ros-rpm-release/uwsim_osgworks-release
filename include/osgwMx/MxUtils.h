@@ -27,6 +27,9 @@
 #include <osg/BoundingSphere>
 #include <osg/Vec2d>
 
+#include <vector>
+#include <map>
+
 
 namespace osgwMx
 {
@@ -190,7 +193,7 @@ is 0.0 to pi/2. Default is 1.3.
 */
 void OSGWMX_EXPORT computeTrackball( double& angle, osg::Vec3d& axis,
     const osg::Vec2d& start, const osg::Vec2d& delta,
-    const osg::Matrix& orientMat, const double sensitivity=1.3 );
+    const osg::Matrixd& orientMat, const double sensitivity=1.3 );
 
 
 /** \class FunctionalMap MxUtils.h <osgwMx/MxUtils.h>
@@ -250,6 +253,8 @@ public:
         MoveModeLocal,
         /** Move in the ground plane (defined by the initial up vector). */
         MoveModeConstrained,
+        /** Move in the oriented coordinate system. */
+        MoveModeOriented,
         /** Move in world coordinates. */
         MoveModeWorld,
         /** Move along a vector between the eye and the orbit center, slowing
