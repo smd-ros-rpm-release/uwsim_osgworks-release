@@ -28,8 +28,10 @@
 
 
 /** \addtogroup Plugins
-osgwTools contains two plugins, osgdb_osgwTools for dot OSG file support of
-various classes in the osgwTools library, and osgdb_skeleton, a plugin for
+osgwTools contains three plugins, osgdb_osgwTools for dot OSG file support of
+various classes in the osgwTools library, osgdb_osgobjects for dot OSG file
+support of core OSG Object-derived classes that OSG fails to support directly
+(such as Array), and osgdb_skeleton, a plugin for
 writing scene graph hierarchy information.
 @{*/
 
