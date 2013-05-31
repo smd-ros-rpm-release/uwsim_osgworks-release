@@ -226,7 +226,6 @@ private:
     {
         //osg::notify(osg::ALWAYS)<<"Clicked: x: "<<x<<" y: "<<y<<"\n";
         if(!v->getSceneData())return false;
-        double w(.005), h(.005);
 
         osgUtil::LineSegmentIntersector* picker = 
             new osgUtil::LineSegmentIntersector(osgUtil::Intersector::PROJECTION,x,y);
@@ -261,14 +260,15 @@ private:
 /* \endcond */
 
 SliderControl::SliderControl()
-  : _currentValue( 0. ),
-    _playMode( STOP ),
-    _root(new osg::Group ),
-    _h(25),
+  : _h(25),
+    _time( 1.f ),
     _simTime(0),
-    _time( 1.f )
+    _root(new osg::Group ),
+    _currentValue( 0. ),
+    _playMode( STOP )
 {
 }
+
 SliderControl::~SliderControl()
 {
 }
